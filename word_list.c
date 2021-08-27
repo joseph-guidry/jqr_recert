@@ -1,6 +1,7 @@
 #include <word_list.h>
 
 #ifdef USE_THREADPOOL
+    #include <pthread.h>
     void test_use_tp_from_cmake_define () __attribute__((constructor));
 #endif
 
@@ -11,6 +12,20 @@ void test_use_tp_from_cmake_define()
 
 // #define trie_cleanup __attribute__((cleanup(word_list_trie_destroy)))
 static trie_node_t * trie;
+
+#ifdef USE_THREADPOOL
+    #define SINGLETON_MUTEX(l) \
+          struct pthread_mutex_t l = PTHREAD_MUTEX_INITIALIZER
+#endif
+
+#define SINGLETON(t, inst, init) \
+    SINGLETON_##t() \
+        static t inst = init;
+#if USE_THREADPOOL
+        SINGLETON_MUTEX(lock);
+#endif
+        return &inst
+    
 
 int word_list_trie_create () __attribute__((constructor));
 void word_list_trie_destroy () __attribute__((destructor));
