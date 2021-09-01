@@ -1,6 +1,17 @@
 #include <word_list.h>
 
-#ifdef USE_THREADPOOL
+
+#ifdef NDEBUG
+	#define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n",\
+		        __FILE__, __LINE__, ##__VA_ARGS__)
+#else
+	#define log_info(M, ...)
+#endif
+
+
+#define USE_THREADS
+
+#ifdef USE_THREADS
     #include <pthread.h>
     void test_use_tp_from_cmake_define () __attribute__((constructor));
 #endif
@@ -13,19 +24,10 @@ void test_use_tp_from_cmake_define()
 // #define trie_cleanup __attribute__((cleanup(word_list_trie_destroy)))
 static trie_node_t * trie;
 
-#ifdef USE_THREADPOOL
-    #define SINGLETON_MUTEX(l) \
-          struct pthread_mutex_t l = PTHREAD_MUTEX_INITIALIZER
+#ifdef USE_THREADS
+    static pthread_mutex_t trie_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-#define SINGLETON(t, inst, init) \
-    SINGLETON_##t() \
-        static t inst = init;
-#if USE_THREADPOOL
-        SINGLETON_MUTEX(lock);
-#endif
-        return &inst
-    
 
 int word_list_trie_create () __attribute__((constructor));
 void word_list_trie_destroy () __attribute__((destructor));
@@ -45,8 +47,11 @@ void word_list_trie_destroy()
 
 int word_list_trie_insert(char * string)
 {
+    // pthread_mutex_lock(TRIE_LOCK);
     return trie_insert_r(trie, string, 0);
-}
+    // pthread_mutex_unlock(TRIE_LOCK);
+
+}   
 
 void word_list_trie_display()
 {
@@ -111,8 +116,13 @@ int word_list_add_word(word_list_t * word_list, char * word)
     return 0;
 }
 
-int word_list_trie_remove()
+int word_list_trie_remove(trie_node_t * node, char * string)
 {
+    if(string)
+    {
+
+    }
+    
     return 0;
 }
 
