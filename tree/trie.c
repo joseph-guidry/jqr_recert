@@ -5,7 +5,21 @@
 
 int is_node_leaf(trie_node_t * node)
 {
-    if(node->is_end)
+    // This check might be simplier if each node held number of children
+    // scan if there are any leaf nodes
+    
+    int idx;
+    for(idx = 0; idx < NUM_LETTERS; idx++)
+    {
+        if(node->nletter[idx] != NULL)
+        {
+            break;
+        }
+    }
+
+    // printf("update node if leaf [%c]\n", idx + 'a');
+
+    if(NUM_LETTERS == idx)
     {
         return EXIT_SUCCESS;
     }
@@ -14,10 +28,13 @@ int is_node_leaf(trie_node_t * node)
 }
 
 int is_end_of_word(trie_node_t * node)
-{   // check if nletter[0] != NULL
-        // return true;
+{   
+    if(node->is_end)
+    {
+        return EXIT_SUCCESS;
+    }
 
-    return 0;
+    return EXIT_FAILURE;
 }
 
 int create_node(trie_node_t ** new, int level)
@@ -41,11 +58,12 @@ int create_node(trie_node_t ** new, int level)
     return EXIT_SUCCESS;
 }
 
-void destory_node(trie_node_t * node)
+void destroy_node(trie_node_t * node)
 {
     if(node)
     {
         free(node);
+        node = NULL;
     }
 }
 
@@ -72,7 +90,7 @@ void trie_destroy(trie_node_t * root)
             
         }
     }
-    destory_node(root);
+    destroy_node(root);
 
 }
 
@@ -102,68 +120,39 @@ int trie_insert_r(trie_node_t * root, char * str, int level)
     trie_insert_r(root->nletter[idx], ++str, level++);
 }
 
-#if 0 
+#if 1
 int trie_remove(trie_node_t * root, char * str)
 {
     if(*str == '\0')
     {
         // Find the end of the string
+        root->is_end = 0;
         return EXIT_SUCCESS;
     }
     
     int idx = *str - 'a';
     if(NULL != root->nletter[idx])
     {
-        trie_remove(root->nletter[idx], ++str);
-        // Once end of string is found, determine leaf_node 
-        if(root->nletter[idx].is_end)
+        trie_remove(root->nletter[idx], str +1 );
+
+        printf("check if a leaf node [%c]\n", *str);
+        if(0 == is_node_leaf(root->nletter[idx]))
         {
-            // destroy
+            // delete node
+            printf("deleting node\n");
+            destroy_node(root->nletter[idx]);
+            root->nletter[idx] = NULL;
         }
-        // update root to determine if it is a leaf_node?
-        
-        int i;
-        for(i = 0; i < 26; i++)
-        {
-            if(NULL != root->nletter[idx])
-                break;
-        }
-        
-        // node is a now a leaf node
-        if(26 == i)
-            root->is_end = 1;
-    }
-}
-
-
-#if 0
-int trie_insert(trie_node_t * root, char * str)
-{
-    int level; 
-    int length = strlen(str);
-    trie_node_t * curr = root;
-
-    for(level = 0; level < length; level++)
-    {
-        int idx = str[level] -'a';
-
-        if(NULL == curr->nletter[idx])
-        {
-            if(create_node(&root->nletter[idx], level))
-            {
-                return EXIT_FAILURE;
-            }
-        }
-        curr = curr->nletter[idx];
     }
     
-    curr->is_end = 1;
+
+    
 }
 #endif
 
 void trie_display_r(trie_node_t * root, char * str, int level)
 {
-    if(root->is_end)
+    if(!is_end_of_word(root))
     {
         str[level] = '\0';
         printf("%s\n", str);

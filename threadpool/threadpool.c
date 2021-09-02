@@ -116,7 +116,7 @@ void cleanup_worker(void * args)
             pthread_cond_broadcast(&tp->stop_work);  // This indicated to the threadpool all threads are finished closing
         }
     }
-    else if((tp->head != NULL) && (tp->threadcnt < tp->maxthread)) //if there is more work and not max threads, make new one
+    else if((heap_size(tp->queue)) && (tp->threadcnt < tp->maxthread)) //if there is more work and not max threads, make new one
     {
         worker_init(tp);
     }

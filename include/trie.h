@@ -15,7 +15,7 @@ struct trie_node {
 
 int create_node(trie_node_t ** new, int level);
 
-int destroy_node();
+void destroy_node();
 
 int trie_create();
 
@@ -24,6 +24,8 @@ void trie_destroy();
 int trie_insert_r();
 
 int trie_insert();
+
+int trie_remove();
 
 void trie_display_r();
 

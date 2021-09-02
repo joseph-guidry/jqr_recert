@@ -33,6 +33,11 @@ int word_list_trie_insert(char * string)
     return trie_insert_r(trie, string, 0);
 }
 
+int word_list_trie_remove(char * string)
+{
+    return trie_remove(trie, string);
+}
+
 void word_list_trie_display()
 {
     char * buff = calloc(1, 20);
@@ -93,11 +98,6 @@ int word_list_add_word(word_list_t * word_list, char * word)
     // printf("lets get bug fixing word_list[%d] [%s]\n",word_list->current, word_list->word_list_array[word_list->current]);
     word_list->current++;
     free(buff);
-    return 0;
-}
-
-int word_list_trie_remove()
-{
     return 0;
 }
 
