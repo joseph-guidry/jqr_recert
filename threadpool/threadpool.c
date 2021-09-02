@@ -60,19 +60,11 @@ void * task_exec(void * args)
         }
 
         // If there are tasks in the queue
-        // if(is_empty(tp->queue))
-        printf("here\n");
         if(heap_size(tp->queue))
         {
-            // task = tp->head;
-            // tp->head = task->next;
-            printf("dequeue task\n");
             dequeue(tp->queue, (void *) &task);
-
-            printf("task == NULL? %c\n", task == NULL ?'T':'F');
             func = task->routine;
             args = task->args;
-            // tp->job_count--;
 
             free(task);
 
@@ -89,7 +81,10 @@ void * task_exec(void * args)
             // pthread_mutex_unlock(&task_lock);
 
             func(args);
-            pthread_cleanup_pop(1); // execute cleanup_job()
+            
+            // Queue return value into another job 
+            // ret = func(args);
+            pthread_cleanup_pop(1); // execute cleanup_task()
         }
     }
 
@@ -130,14 +125,14 @@ void cleanup_worker(void * args)
 }
 
 void cleanup_task(void * args)
-{// TODO
+{
     tp_t * tp = (tp_t *)args;
     pthread_t tid = pthread_self();
     thread_t * t, **tptr;
     
     pthread_mutex_lock(&tp->tp_lock);
 
-    // What is this doing?
+    // pulls thread out of active works list
     tptr = &tp->active_workers;
     while( (t = *tptr) != NULL)
     {
@@ -147,8 +142,6 @@ void cleanup_task(void * args)
         }
         tptr = &t->next;
     }
-
-    // This is not finished
 }
 
 // threadpool functions
@@ -170,9 +163,6 @@ int tp_create(tp_t ** tp)
         return EXIT_FAILURE;
     }
 
-    // new->head = NULL;
-    // new->tail = NULL;
-
     pthread_mutex_init(&new->tp_lock, NULL);
     pthread_cond_init(&new->work_notify, NULL);
     pthread_cond_init(&new->stop_work, NULL);
@@ -185,7 +175,16 @@ int tp_create(tp_t ** tp)
         printf("starting new worker\n");
         worker_init(new);
     }
-
+#ifdef _USE_TRIE_
+#include <trie.h>
+    if(create_trie((trie_node_t *)new->data))
+    {
+        tp_destroy(new);
+        return EXIT_FAILURE;
+    }
+#endif
+    
+    
     *tp = new;
 
     return EXIT_SUCCESS;
@@ -207,17 +206,6 @@ int tp_queue_task(tp_t * tp, void (*routine)(void *), void* args, int priority)
     pthread_mutex_lock(&tp->tp_lock);
     // push task into priority queue using priority
 
-    // if(NULL == tp->head)
-    // {
-    //     tp->head = task;
-    // }
-    // else
-    // {
-    //     tp->tail->next = task;
-    // }
-
-    // tp->tail = task;
-    // tp->job_count++;
     printf("adding task to queue\n");
     enqueue(tp->queue, task);
 
