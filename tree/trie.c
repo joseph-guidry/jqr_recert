@@ -97,14 +97,42 @@ int trie_insert_r(trie_node_t * root, char * str, int level)
             return EXIT_FAILURE;
         }
     }
-    // else
-    // {
-    //     printf("node already exists for [%c]\n", *str);
-    // }
     
     // Insert next letter into the
-    // printf("insert next char [%c]\n", *(str+1));
     trie_insert_r(root->nletter[idx], ++str, level++);
+}
+
+#if 0 
+int trie_remove(trie_node_t * root, char * str)
+{
+    if(*str == '\0')
+    {
+        // Find the end of the string
+        return EXIT_SUCCESS;
+    }
+    
+    int idx = *str - 'a';
+    if(NULL != root->nletter[idx])
+    {
+        trie_remove(root->nletter[idx], ++str);
+        // Once end of string is found, determine leaf_node 
+        if(root->nletter[idx].is_end)
+        {
+            // destroy
+        }
+        // update root to determine if it is a leaf_node?
+        
+        int i;
+        for(i = 0; i < 26; i++)
+        {
+            if(NULL != root->nletter[idx])
+                break;
+        }
+        
+        // node is a now a leaf node
+        if(26 == i)
+            root->is_end = 1;
+    }
 }
 
 
