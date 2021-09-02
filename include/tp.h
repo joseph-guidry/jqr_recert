@@ -44,6 +44,7 @@ struct threadpool {
     pthread_cond_t work_notify;
     pthread_cond_t stop_work;
 
+    // Does this variable need a mutex? 
     int threadcnt; 
     int minthread;
     int maxthread;
