@@ -263,6 +263,9 @@ int tp_destory(tp_t * tp)
         pthread_cancel(tptr->tid);
     }
 
+    // since tp->threadcnt is being accessed by multiple threads 
+    // attempt to create a macro that will take tp and lock threadcnt_lock  prior to access
+    // maybe use a semaphore? and wait 
     while(tp->threadcnt > 0)
     {
         pthread_cond_wait(&tp->stop_work, &tp->tp_lock);
