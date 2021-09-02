@@ -51,17 +51,13 @@ struct threadpool {
 
     pthread_attr_t worker_attr;
     thread_t * active_workers;
-
-    // Create 
-    task_t * head;
-    task_t * tail; 
-    int job_count; 
-    //TODO: create priority queue to add tasks to
-
+   
+    // priority queue
     heap_t * queue;
 
     // root node of trie
-    // node_t * trie_root = NULL;
+    // void * data = NULL;
+    // pthread_mutex_t data_lock;
 };
 
 
@@ -70,5 +66,15 @@ int tp_create(tp_t ** tp);
 int tp_queue_task(tp_t * tp, void (*routine)(void *), void* args, int priority);
 
 int tp_destory(tp_t * tp);
+
+#if 0
+// This function will attempt to be a generic function to access what ever the
+// data storage mechanism is.  First will be using a trie. Based on the DS lib used,
+// this will use #ifdef USE_TRIE_ or other DS types
+// WORDLIST will have its operations [INSERT|RETRIEVE] from the DS
+
+int access_data();
+
+#endif
 
 #endif
