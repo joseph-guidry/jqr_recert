@@ -1,36 +1,17 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.14)
 
-project(dsproject)
+project(cmake_cgo)
 
-option(WITH_USE_THREADPOOL "Use Threadpool" ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_BINARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-# add_subdirectory(list)
-# add_subdirectory(graph)
+set(ASAN_ENABLED OFF)
 
-add_subdirectory(tree)
+include(cmake/go.cmake)
+# include(cmake/asan.cmake)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
-add_subdirectory(heap EXCLUDE_FROM_ALL)
-add_subdirectory(threadpool EXCLUDE_FROM_ALL)
-
-
-
-set(DS_SRC
-    tp_main.c
-    # main.c
-)
-
-set(WL_SRC
-    word_list.c
-)
-
-set(WL_HDRS 
-    "${dsproject_SOURCE_DIR}/include/word_list.h"
-)
-
-add_library(libwordlist STATIC ${WL_SRC} ${WL_HDRS})
-target_link_libraries(libwordlist PRIVATE libtree)
-target_include_directories(libwordlist PUBLIC "../include")
-
-add_executable(ds_testapp ${DS_SRC})
-target_link_libraries(ds_testapp PRIVATE libtp libwordlist)
+add_subdirectory(src/c)
+add_subdirectory(src/go)
