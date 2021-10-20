@@ -62,7 +62,7 @@ int main(void)
     }
 
     char * buff = NULL;
-    ssize_t bufflen = 0;
+    size_t bufflen = 0;
 
     test_work_t * work = calloc(1, sizeof(test_work_t));
     

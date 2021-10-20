@@ -118,6 +118,7 @@ int trie_insert_r(trie_node_t * root, char * str, int level)
     
     // Insert next letter into the
     trie_insert_r(root->nletter[idx], ++str, level++);
+    return EXIT_SUCCESS;
 }
 
 #if 1
@@ -145,7 +146,7 @@ int trie_remove(trie_node_t * root, char * str)
         }
     }
     
-
+    return EXIT_SUCCESS;
     
 }
 #endif

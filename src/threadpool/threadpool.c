@@ -224,7 +224,6 @@ int tp_queue_task(tp_t * tp, void (*routine)(void *), void* args, int priority)
 int tp_destory(tp_t * tp)
 {
     thread_t * tptr;
-    task_t * taskptr; 
     sigset_t set;
 
     tp->status = STOP;

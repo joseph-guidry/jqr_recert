@@ -128,6 +128,7 @@ int word_list_build_internal(word_list_t * word_list, trie_node_t * node, int le
             word_list_build_internal(word_list, node->nletter[i], level + 1);
         }
     }
+    return EXIT_SUCCESS;
 }
 
 int word_list_build(word_list_t * wl)
